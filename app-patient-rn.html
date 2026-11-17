@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>기형남 · 환자 앱 MIMI (React Native) 프로젝트</title>
+<style>
+  :root {
+    --text: #37352f; --muted: #787774; --line: #e9e9e7; --bg-soft: #f7f6f3;
+    --blue-bg: #e7f3f8; --green-bg: #edf3ec; --green: #448361; --orange-bg: #fbecdd; --orange: #d9730d;
+    --purple-bg: #f6f3f9; --purple: #9065b0; --red-bg: #fdebec; --red: #d44c47; --yellow-bg: #fbf3db;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; color: var(--text); background: #fff; line-height: 1.65; font-size: 15px;
+    font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", "Segoe UI", sans-serif; }
+  .cover { height: 180px; background: linear-gradient(120deg, #0f4c4a 0%, #1f9e89 50%, #a8e0c8 100%); }
+  .page { max-width: 900px; margin: 0 auto; padding: 0 56px 96px; }
+  .icon { font-size: 72px; margin-top: -44px; line-height: 1; }
+  h1 { font-size: 38px; margin: 12px 0 4px; font-weight: 700; letter-spacing: -0.5px; }
+  h2 { font-size: 24px; margin: 48px 0 10px; padding-bottom: 6px; border-bottom: 1px solid var(--line); font-weight: 650; }
+  h3 { font-size: 18px; margin: 26px 0 6px; font-weight: 650; }
+  h4 { margin: 0 0 6px; font-size: 15px; }
+  p { margin: 6px 0; }
+  a { color: inherit; text-decoration: underline; text-decoration-color: #c9c8c4; }
+  code { font-size: 13px; background: #f1f1ef; padding: 1px 5px; border-radius: 4px; overflow-wrap: anywhere; }
+  .subtitle { font-size: 18px; color: var(--muted); margin-bottom: 18px; }
+  .props { display: grid; grid-template-columns: 140px 1fr; gap: 6px 12px; font-size: 14px; margin: 18px 0 8px; }
+  .props .k { color: var(--muted); }
+  .callout { display: flex; gap: 12px; background: var(--bg-soft); border-radius: 6px; padding: 16px 18px; margin: 14px 0; }
+  .callout .ci { font-size: 20px; line-height: 1.4; }
+  .callout.blue { background: var(--blue-bg); } .callout.yellow { background: var(--yellow-bg); } .callout.purple { background: var(--purple-bg); }
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 14px 0; }
+  .stat { border: 1px solid var(--line); border-radius: 8px; padding: 14px; }
+  .stat b { display: block; font-size: 24px; letter-spacing: -0.5px; }
+  .stat span { font-size: 12.5px; color: var(--muted); }
+  .tag { display: inline-block; padding: 1px 8px; margin: 2px 3px 2px 0; border-radius: 4px; font-size: 13px; white-space: nowrap; }
+  .t-blue { background: var(--blue-bg); color: #1a6aa8; } .t-green { background: var(--green-bg); color: var(--green); }
+  .t-orange { background: var(--orange-bg); color: var(--orange); } .t-purple { background: var(--purple-bg); color: var(--purple); }
+  .t-red { background: var(--red-bg); color: var(--red); } .t-gray { background: #f1f1ef; color: #5f5e5b; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; margin: 10px 0; }
+  th, td { border: 1px solid var(--line); padding: 8px 10px; text-align: left; vertical-align: top; }
+  th { background: var(--bg-soft); font-weight: 600; color: var(--muted); width: 160px; }
+  ul { margin: 6px 0; padding-left: 22px; } li { margin: 3px 0; }
+  .project { border: 1px solid var(--line); border-radius: 12px; padding: 22px 26px; margin: 18px 0; }
+  .project > h3:first-child { margin-top: 0; font-size: 21px; }
+  .meta { font-size: 13.5px; color: var(--muted); margin: 2px 0 12px; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 12px 0; }
+  .card { border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; }
+  .card ul { padding-left: 18px; font-size: 14px; }
+  .role { display: inline-block; font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 10px; margin-right: 6px; }
+  .role.be { background: var(--blue-bg); color: #1a6aa8; } .role.app { background: var(--green-bg); color: var(--green); }
+  .role.infra { background: var(--orange-bg); color: var(--orange); }
+  .muted { color: var(--muted); font-size: 13.5px; }
+  .toc { font-size: 14px; } .toc a { text-decoration: none; color: var(--muted); }
+  @media (max-width: 720px) { .page { padding: 0 20px 64px; } .stats { grid-template-columns: repeat(2, 1fr); } .grid2 { grid-template-columns: 1fr; } }
+  @media print { .cover { height: 80px; } .project, .card { break-inside: avoid; } }
+</style>
+</head>
+<body>
+<div class="cover"></div>
+<div class="page">
+  <div class="icon">📱</div>
+  <h1>환자 앱 MIMI (React Native)</h1>
+  <div class="subtitle">해외 환자가 쓰는 iOS · Android 앱 — 기형남 · 개발 총괄 / Backend Lead · API Owner</div>
+
+  <div class="props">
+    <div class="k">🏢 소속</div><div>주식회사 리스타 · 개발 총괄</div>
+    <div class="k">📦 프로젝트</div><div><b>resta-patient</b> (환자 앱, 2025.12 ~ 현재 · 스토어 버전 2.18.0)</div>
+    <div class="k">👥 팀 구성</div><div>RN 개발자 2명이 앱 화면과 네이티브 코드를 구현 · 본인은 개발 총괄과 앱이 쓰는 서버 · 배포 인프라 담당</div>
+    <div class="k">🔗 연관</div><div>백엔드 <b>resta_api</b> 이력서, <b>병원 어드민 &amp; Haru Agent</b> 문서와 함께 보시면 됩니다</div>
+  </div>
+
+  <div class="callout blue">
+    <div class="ci">🧭</div>
+    <div>
+      MIMI 환자 앱은 해외 환자가 한국 병원을 <b>탐색 → 상담 신청 → 영상 상담 → 결제 · 예약</b>까지 끝내는 앱입니다.
+      2026년 9월 일본 · 중국 · 대만 · 미국 · 싱가포르 스토어에 출시했습니다.<br /><br />
+      저는 이 앱의 <b>화면을 직접 만들지는 않았습니다.</b> 맡은 일은 네 가지입니다.
+      앱이 호출하는 <b>API · 실시간 서버 · 푸시 · 결제</b>를 설계하고 구현했고,
+      Swagger → orval로 <b>앱 API 클라이언트가 자동 생성되는 계약</b>을 관리했고,
+      앱 코드 푸시(OTA)가 지나가는 <b>배포 인프라</b>를 만들고 운영했고,
+      앱이 실제로 보내는 요청으로 <b>서버 회귀를 막는 배포 게이트</b>를 두었습니다.
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><b>5개국</b><span>스토어 출시 (JP · CN · TW · US · SG)</span></div>
+    <div class="stat"><b>5개</b><span>앱 언어 (ko · en · ja · zh · zh-TW)</span></div>
+    <div class="stat"><b>48</b><span>로그인 후 화면 모듈</span></div>
+    <div class="stat"><b>0.04초</b><span>OTA 업데이트 확인 (개선 전 3.8초)</span></div>
+  </div>
+
+  <div class="toc">
+    <a href="#app">1. 앱 개요</a> &nbsp;·&nbsp;
+    <a href="#structure">2. 앱 구조</a> &nbsp;·&nbsp;
+    <a href="#server">3. 앱 기능과 서버 구현</a> &nbsp;·&nbsp;
+    <a href="#ota">4. OTA 배포 인프라</a> &nbsp;·&nbsp;
+    <a href="#contract">5. 앱–서버 계약과 배포 게이트</a> &nbsp;·&nbsp;
+    <a href="#trouble">6. 문제 해결 사례</a>
+  </div>
+
+  <!-- ================= APP ================= -->
+  <h2 id="app">📱 1. 앱 개요</h2>
+  <div class="project">
+    <h3>해외 환자가 한국 병원 상담부터 예약까지 끝내는 모바일 앱</h3>
+    <div class="meta">2025.12 ~ 현재 · iOS / Android · 국내 스토어 미출시(해외 전용) · 스토어 릴리스 + OTA 코드 푸시 병행</div>
+    <div>
+      <span class="tag t-blue">React Native 0.83 (New Architecture · Hermes)</span><span class="tag t-blue">React 19</span><span class="tag t-blue">TypeScript</span>
+      <span class="tag t-green">TanStack Query</span><span class="tag t-green">orval</span><span class="tag t-green">Zustand · MMKV</span><span class="tag t-green">React Navigation 7</span>
+      <span class="tag t-orange">Agora RTC</span><span class="tag t-orange">CallKeep · PushKit(VoIP)</span><span class="tag t-orange">Socket.io</span><span class="tag t-orange">LangGraph SDK · SSE</span>
+      <span class="tag t-purple">FCM · Notifee</span><span class="tag t-purple">hot-updater (OTA)</span><span class="tag t-purple">Firebase Remote Config</span>
+      <span class="tag t-gray">i18next</span><span class="tag t-gray">Reanimated · Skia</span><span class="tag t-gray">Airbridge</span><span class="tag t-gray">Sentry · Clarity</span><span class="tag t-gray">TossPayments (WebView)</span>
+    </div>
+
+    <h3>서비스 범위</h3>
+    <table>
+      <tr><th>탐색</th><td>홈 · 피드, 카테고리 탐색, 통합 검색, 병원 · 의사 · 시술 상품 상세, 전후사진 케이스, 기획전, 좋아요 · 저장</td></tr>
+      <tr><th>상담</th><td>상담 신청(메신저 · 영상), 견적 요청, 결제, 예약 목록 · 영수증, 영상 통화(실시간 통역 자막), 수신 전화 화면, 상담 요약, 대면 통역기</td></tr>
+      <tr><th>미미톡</th><td>병원과 1:1 채팅, 일정 제안 · 예약금 · 방문 확정 카드, 병원 공지 · 알림</td></tr>
+      <tr><th>AI</th><td>AI 상담 에이전트 채팅(스트리밍 응답 · UI 블록), AI 피부 · 관상 분석, 병원 매칭</td></tr>
+      <tr><th>커뮤니티 · 리뷰</th><td>커뮤니티 게시글 · 댓글, 리뷰 작성 · 상세, 내 리뷰 관리</td></tr>
+      <tr><th>이벤트</th><td>룰렛 이벤트, 무료 상담 · 항공권 · 추천인 프로모션 랜딩, 쿠폰 · 상담권</td></tr>
+      <tr><th>계정</th><td>Apple · Google · LINE 로그인, 온보딩, 언어 선택, 알림함, 프로필 수정, CS 문의, 회원 탈퇴</td></tr>
+    </table>
+  </div>
+
+  <!-- ================= STRUCTURE ================= -->
+  <h2 id="structure">🧱 2. 앱 구조</h2>
+  <p>앱 코드에서 확인한 구조입니다. 서버를 설계할 때 이 구조를 전제로 계약을 맞췄습니다.</p>
+  <table>
+    <tr><th>부팅</th><td>업데이트 확인 화면에서 강제 업데이트 판정 → OTA 번들 확인 → A/B 실험 배정을 기다린 뒤 진입. 앱을 계속 켜 두는 사용자를 위해 포그라운드 복귀 때 OTA를 다시 확인하고 다음 실행에 적용</td></tr>
+    <tr><th>서버 통신</th><td>Swagger에서 orval이 만든 TanStack Query 훅과 타입만 사용. 401을 받으면 refresh 요청을 한 번만 보내고(single-flight) 토큰을 교체</td></tr>
+    <tr><th>상태</th><td>서버 상태는 TanStack Query, 클라이언트 상태는 Zustand, 영속 저장은 MMKV</td></tr>
+    <tr><th>영상 통화</th><td>Agora RTC. 실시간 통역 자막과 전사 동기화는 Socket.io</td></tr>
+    <tr><th>전화 수신</th><td>iOS는 PushKit(VoIP) + CallKit, Android는 FCM 데이터 메시지 + 전체 화면 알림. Android 14 이상의 전체 화면 인텐트 권한은 Kotlin 네이티브 모듈로 처리</td></tr>
+    <tr><th>AI 채팅</th><td>LangGraph 실행 스트림을 SSE로 수신. RN의 fetch 스트리밍이 불안정해 XHR 진행 이벤트로 SSE를 파싱</td></tr>
+    <tr><th>알림 · 딥링크</th><td>푸시를 누르면 알림 종류와 navigation 값으로 화면 이동. Universal Links · App Links와 설치 후 첫 실행 딥링크 처리</td></tr>
+    <tr><th>분석 · 실험</th><td>자체 이벤트 수집, Firebase(GA4), Airbridge(MMP), Clarity. Firebase Remote Config로 A/B 실험 배정</td></tr>
+    <tr><th>다국어</th><td>i18next 5개 로케일. 서버 에러는 에러 코드로 받아 앱에서 언어별 문구로 표시</td></tr>
+  </table>
+
+  <!-- ================= SERVER ================= -->
+  <h2 id="server">🔌 3. 앱 기능과 서버 구현</h2>
+  <p>앱 화면 뒤에서 제가 설계하고 구현한 서버입니다. 상세는 백엔드 이력서의 도메인별 경험에 있습니다.</p>
+  <table>
+    <tr><th>앱 기능</th><th style="width:auto"><span class="role be">Backend</span>서버에서 만든 것</th></tr>
+    <tr><td><b>푸시 · 알림함</b></td><td>문구 렌더 → DB 저장 → FCM 발송 순서의 <b>save-first</b> 구조. 푸시가 실패하거나 수신 거부여도 알림함에는 남음. 앱 화면 이동은 화면 이름이 아니라 <code>type + payloadVersion + navigation</code> 계약으로 전달해 앱 화면 구조가 바뀌어도 서버를 고치지 않음. dedupe 키로 중복 방지, 180일 보관. FCM 발송은 API와 분리한 전용 워커(별도 Fargate)</td></tr>
+    <tr><td><b>상담 신청 · 미미톡</b></td><td>메신저 상담 신청 자격 판정과 상태 전이, 병원–환자 1:1 채팅(메시지는 MongoDB, 상태 · 권한은 MySQL), 일정 제안 · 예약금 · 방문 확정 시스템 카드, 안 읽은 메시지 알림톡 리마인드</td></tr>
+    <tr><td><b>영상 상담</b></td><td>요청 → 수락 → 결제 → 입장 → 종료 → 리뷰 상태 머신, Agora 토큰과 통화 세션, 실시간 음성 통역 중계(OpenAI Realtime), 상담 종료 후 요약 생성</td></tr>
+    <tr><td><b>결제 · 쿠폰</b></td><td>앱은 토스 결제창을 WebView로 띄워 해외 카드로 결제. 서버는 승인 · 취소 · 환불, 주문 원장, PG 대사 스케줄러, 상담권 · 쿠폰 발급과 회수</td></tr>
+    <tr><td><b>통합 검색</b></td><td>OpenSearch 기반 병원 · 시술 · 의사 · 기획전 다국어 검색, 워터마크 동기화, 무중단 재색인</td></tr>
+    <tr><td><b>AI 상담 에이전트</b></td><td>에이전트는 LangGraph Platform에서 실행하고 앱이 실행 스트림을 직접 수신. 서버는 스레드 생성, 대화 메시지 동기화(MongoDB), 병원 · 시술 · 리뷰 메타데이터 보강을 담당</td></tr>
+    <tr><td><b>AI 피부 · 관상 분석</b></td><td>전용 서비스(face-reading-api)로 사진과 문답을 분석해 점수를 계산하고 시술 추천</td></tr>
+    <tr><td><b>룰렛 · 이벤트</b></td><td>이벤트 신청 · 선정, 응모권 · 쿠폰함 이력, 비회원이 기기 ID로 룰렛을 돌린 기록을 가입 후 회원 기록에 연결, 쿠폰 메일의 앱 링크는 앱이 없으면 스토어로 이동</td></tr>
+    <tr><td><b>병원 · 상품 데이터</b></td><td>병원 · 의사 · 시술 상품 · 전후사진 · 추천 · 상품 진열 API, 콘텐츠 해시로 원문이 바뀐 것만 다시 번역하는 비동기 다국어 번역</td></tr>
+    <tr><td><b>로그인 · 계정</b></td><td>JWT 인증과 권한 분리, 소셜 로그인, 해외 번호 휴대폰 인증(Twilio)</td></tr>
+  </table>
+
+  <!-- ================= OTA ================= -->
+  <h2 id="ota">🚀 4. OTA 배포 인프라</h2>
+  <div class="project">
+    <h3><span class="role infra">Infra</span>스토어 심사 없이 JS 번들을 내보내는 코드 푸시 경로</h3>
+    <div class="meta">hot-updater · AWS S3 + CloudFront + Lambda@Edge · Terraform · dev / production 채널</div>
+    <ul>
+      <li>OTA 스택 전체를 <b>Terraform</b>으로 구성: 번들 저장 S3, CloudFront(OAC), 업데이트 확인을 처리하는 Lambda@Edge, 번들 서명 키(SSM), 액세스 로그 버킷(90일 보관)</li>
+      <li>RN 개발자가 명령 한 줄로 dev · production 채널에 배포할 수 있도록 <b>배포 가이드</b>를 작성하고, Terraform output을 앱 설정의 정본으로 지정</li>
+      <li>CloudFront 액세스 로그로 업데이트 확인 요청 수 대비 번들 다운로드 수를 비교해, 앱이 보내는 지표를 서버 쪽에서 교차 검증</li>
+      <li><b>OTA 배포 현황 대시보드</b>(Grafana): 번들을 내보낸 뒤 실제 단말에 퍼지는지, 업데이트 확인 실패율과 최신 번들 도달률을 배포 직후에 확인</li>
+    </ul>
+  </div>
+
+  <!-- ================= CONTRACT ================= -->
+  <h2 id="contract">📜 5. 앱–서버 계약과 배포 게이트</h2>
+  <div class="grid2">
+    <div class="card">
+      <h4>API 계약 자동화</h4>
+      <ul>
+        <li>NestJS Swagger 스펙에서 orval이 앱의 React Query 훅과 타입을 생성</li>
+        <li>모든 응답에 타입 지정을 강제해 앱이 응답 모양을 추측하지 않게 함</li>
+        <li>내부 운영 전용 API는 앱 클라이언트에 생성되지 않도록 Swagger에서 분리</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>앱 요청으로 막는 서버 회귀</h4>
+      <ul>
+        <li>앱과 병원 어드민이 실제로 보내는 상담 요청을 컨트롤러와 ValidationPipe에 흘리는 <b>요청 시뮬레이션 테스트</b> 작성</li>
+        <li>dev · main 머지의 필수 체크로 지정. DB와 배포 없이 1~2분에 끝나 라우팅 · DTO 변경이 앱을 깨기 전에 차단</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>다국어 · 시간대</h4>
+      <ul>
+        <li>서버는 에러 코드만 내려주고 문구는 앱이 5개 언어로 표시</li>
+        <li>푸시 · 알림 문구는 서버 템플릿에서 환자 언어로 렌더</li>
+        <li>모든 시간은 UTC로 저장하고 앱이 환자 시간대로 변환</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>앱과 서버에 걸친 작업의 절차화</h4>
+      <ul>
+        <li>새 푸시 종류 추가처럼 서버 · 앱 · 템플릿이 함께 바뀌는 작업을 에이전트 스킬 문서로 정리</li>
+        <li>기능마다 스펙 문서를 먼저 쓰고, 서버 계약을 확정한 뒤 앱이 생성된 타입에 맞춰 구현</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ================= TROUBLE ================= -->
+  <h2 id="trouble">🛠️ 6. 문제 해결 사례</h2>
+  <div class="project">
+    <h3>미국 신규 설치 사용자가 OTA 업데이트를 받지 못한 문제</h3>
+    <div class="meta">2026.08 · CloudFront Function · 업데이트 확인 3.8초 → 0.04~0.14초</div>
+    <table>
+      <tr><th>문제</th><td>새 번들을 내보내도 미국 사용자는 업데이트를 건너뛰었습니다. 앱은 업데이트 확인이 타임아웃되면 “업데이트 없음”으로 처리하고 이를 “최신 상태”로 집계해, 실패가 지표에 드러나지 않았습니다.</td></tr>
+      <tr><th>원인</th><td>업데이트 확인 URL의 마지막 값(cohort)이 기기마다 다른 1~1000 숫자였습니다. 같은 응답을 받을 단말이 캐시 키를 1000개로 나눠 가져, 요청이 적은 미국 엣지에서는 거의 모든 요청이 서울 S3까지 왕복했습니다. 액세스 로그 16시간 기준 미국 캐시 적중 0/34, 평균 4.03초였고, 캐시 TTL을 1년으로 올려도 풀리지 않았습니다.</td></tr>
+      <tr><th>제약</th><td>앱에서 cohort를 고정하는 수정은 OTA 번들 안에 들어갑니다. 신규 설치는 스토어 번들로 첫 확인을 하므로, 앱 수정만으로는 다음 스토어 릴리스 전까지 신규 사용자를 구제할 수 없었습니다.</td></tr>
+      <tr><th>해결</th><td>CloudFront Function(viewer-request)으로 엣지에서 cohort 값을 하나로 치환해 캐시 키를 합쳤습니다. 캐시 조회 전에 실행되고 지연이 1ms 미만이라 Lambda@Edge 대신 골랐습니다. 운영 중인 번들 410개가 모두 전체 배포 상태라 응답이 바뀌지 않는다는 것을 먼저 확인했고, QA 타겟팅용 값과 구버전 SDK 경로는 치환에서 제외했습니다.</td></tr>
+      <tr><th>결과</th><td>한 번도 요청된 적 없는 cohort 6개가 모두 캐시 적중 0.04~0.14초로 응답했습니다(적용 전 3.81초). 스토어 릴리스를 기다리지 않고 신규 설치 사용자까지 적용됐습니다.</td></tr>
+      <tr><th>남긴 것</th><td>치환 규칙의 자체 검증 테스트, Terraform 변수 하나로 되돌리는 롤백 절차, “단계적 배포를 쓰려면 이 함수를 먼저 뗀다”는 전제를 문서로 남겼습니다. 같은 종류의 조용한 실패를 배포 직후에 보도록 OTA 배포 현황 대시보드를 만들었습니다.</td></tr>
+    </table>
+  </div>
+
+  <p class="muted" style="margin-top:40px">※ 앱 구조와 화면 범위는 resta-patient <code>develop</code> 기준입니다 (2026.11). 앱 화면과 네이티브 코드는 RN 개발자 2명이 구현했고, 본인은 개발 총괄로서 API · 실시간 서버 · 푸시 · 결제(resta_api)와 OTA 인프라를 담당했습니다. 서버 항목은 resta_api 본인 커밋 기준입니다.</p>
+</div>
+</body>
+</html>
